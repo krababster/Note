@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Note
@@ -15,6 +10,42 @@ namespace Note
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // TODO: данная строка кода позволяет загрузить данные в таблицу "dataSet1.Test". При необходимости она может быть перемещена или удалена.
+            this.testTableAdapter.Fill(this.dataSet1.Test);
+
+            using (SqlConnection conn = new SqlConnection(@"Server=krababster;Database=TestDB;Trusted_Connection=True;"))
+            {
+                conn.Open();
+                string sqlCommand = "SELECT * FROM[Name];";
+
+                SqlDataAdapter adapter = new SqlDataAdapter(sqlCommand, conn);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds);
+
+
+                //show
+                foreach (DataTable item in ds.Tables)
+                {
+                    foreach (DataColumn col in item.Columns)
+                    {
+                        Console.Write($"{col.ColumnName}\t");
+                    }
+                    Console.WriteLine();
+
+                    foreach (DataRow row in item.Rows)
+                    {
+                        foreach (object rowItem in row.ItemArray)
+                        {
+                            Console.Write($"{rowItem.ToString()}\t");
+                        }
+                        Console.WriteLine();
+                    }
+                }
+            }
         }
     }
 }
